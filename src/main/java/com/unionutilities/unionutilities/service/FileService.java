@@ -40,4 +40,14 @@ public class FileService {
         Path file = Paths.get(storageConfig.getFolderPath() + File.separator + storageConfig.getResultFilePath());
         Files.write(file, Collections.singleton(json), StandardCharsets.UTF_8);
     }
+
+    public ApiCallResultContainer getStoredResults() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(getResultsFile(), ApiCallResultContainer.class);
+    }
+
+    private File getResultsFile() {
+        return new File(storageConfig.getFolderPath() + File.separator + storageConfig.getResultFilePath());
+    }
+
 }
