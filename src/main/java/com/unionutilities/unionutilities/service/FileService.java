@@ -21,14 +21,12 @@ public class FileService {
 
     private final StorageConfig storageConfig;
 
-    public void createStorageFolder() {
-        new File(storageConfig.getFolderPath()).mkdirs();
+    public Boolean createStorageFolder() {
+        return new File(storageConfig.getFolderPath()).mkdirs();
     }
 
-    public void createResultsFile() throws IOException {
-        File resultsFile = new File(storageConfig.getFolderPath() +
-                File.separator + storageConfig.getResultFilePath());
-        resultsFile.createNewFile();
+    public Boolean createResultsFile() throws IOException {
+        return getResultsFile().createNewFile();
     }
 
     public void writeResultsToFile(List<ApiCallResult> apiCallResults) throws IOException {
