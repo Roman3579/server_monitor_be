@@ -1,4 +1,4 @@
-package com.unionutilities.unionutilities;
+package com.unionutilities.unionutilities.service;
 
 import com.unionutilities.unionutilities.client.AppInfoRestClient;
 import com.unionutilities.unionutilities.config.EndpointsConfig;
