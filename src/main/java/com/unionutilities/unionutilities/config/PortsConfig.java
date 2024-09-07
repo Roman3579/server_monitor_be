@@ -10,6 +10,6 @@ import org.springframework.stereotype.Component;
 @Setter
 @ConfigurationProperties("config.ports")
 public class PortsConfig {
-    private String lowerBound;
-    private String upperBound;
+    private Integer lowerBound;
+    private Integer upperBound;
 }
