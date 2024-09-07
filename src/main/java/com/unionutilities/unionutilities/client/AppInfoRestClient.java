@@ -10,6 +10,7 @@ import okhttp3.Response;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -23,11 +24,14 @@ public class AppInfoRestClient {
         Request request = new Request.Builder()
                 .url(url)
                 .build();
+        return makeApiCall(request);
+    }
 
+    private AppInfoModel makeApiCall(Request request) {
         try (Response response = client.newCall(request).execute()){
-            log.info("Attempting call to {}", url);
-            return mapper.readValue(response.body().byteStream(), AppInfoModel.class);
-        } catch (IOException e){
+            log.info("Attempting call to {}", request.url());
+            return mapper.readValue(Objects.requireNonNull(response.body()).byteStream(), AppInfoModel.class);
+        } catch (IOException | NullPointerException e){
             log.error(e.getMessage());
             return AppInfoModel.error();
         }
