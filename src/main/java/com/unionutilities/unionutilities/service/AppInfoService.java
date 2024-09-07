@@ -4,14 +4,12 @@ import com.unionutilities.unionutilities.client.AppInfoRestClient;
 import com.unionutilities.unionutilities.config.EndpointsConfig;
 import com.unionutilities.unionutilities.config.IpConfig;
 import com.unionutilities.unionutilities.config.PortsConfig;
-import com.unionutilities.unionutilities.model.AppInfoModel;
+import com.unionutilities.unionutilities.model.ApiCallResult;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @AllArgsConstructor
@@ -22,11 +20,10 @@ public class AppInfoService {
     private final EndpointsConfig endpointsConfig;
     private final AppInfoRestClient client;
 
-    public Map<String, AppInfoModel> getAllAppInfos() {
-        Map<String, AppInfoModel> results = new HashMap<>();
-        List<String> targetUrls = buildTargetUrls();
-        for (String url : targetUrls){
-            results.put(url, client.getAppInfo(url));
+    public List<ApiCallResult> getAllAppInfos() {
+        List<ApiCallResult> results = new ArrayList<>();
+        for(String url : buildTargetUrls()){
+            results.add(new ApiCallResult(url, client.getAppInfo(url)));
         }
         return results;
     }
