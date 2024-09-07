@@ -14,7 +14,7 @@ public class ConfigInfoPrinter implements ApplicationRunner {
     private IpConfig ipConfig;
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
         printConfigInfo();
     }
 
