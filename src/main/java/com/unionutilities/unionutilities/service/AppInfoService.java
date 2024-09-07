@@ -5,20 +5,45 @@ import com.unionutilities.unionutilities.config.EndpointsConfig;
 import com.unionutilities.unionutilities.config.IpConfig;
 import com.unionutilities.unionutilities.config.PortsConfig;
 import com.unionutilities.unionutilities.model.ApiCallResult;
+import com.unionutilities.unionutilities.model.ApiCallResultContainer;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class AppInfoService {
 
     private final IpConfig ipConfig;
     private final PortsConfig portsConfig;
     private final EndpointsConfig endpointsConfig;
     private final AppInfoRestClient client;
+    private final FileService fileService;
+
+    public Boolean refreshAppInfos() {
+        try {
+            fileService.writeResultsToFile(getAllAppInfos());
+            return true;
+        } catch (IOException e){
+            log.error("An error occurred when refreshing app info: {}", e.getMessage());
+            return false;
+        }
+    }
+
+    public Optional<ApiCallResultContainer> getStoredInfos() {
+        try {
+            return Optional.of(fileService.getStoredResults());
+        } catch (IOException e){
+            log.error("An error occurred when retrieving stored results: {}", e.getMessage());
+            return Optional.empty();
+        }
+    }
 
     public List<ApiCallResult> getAllAppInfos() {
         List<ApiCallResult> results = new ArrayList<>();
