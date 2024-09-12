@@ -13,6 +13,14 @@
 	<version>1.0.0</version>
 	<name>union_utilities</name>
 	<description>Utility application for use in Union UP/UZP</description>
+
+	<repositories>
+		<repository>
+			<id>maven-public</id>
+			<url>https://nexus.netgrif.com/repository/maven-public/</url>
+		</repository>
+	</repositories>
+
 	<url/>
 	<licenses>
 		<license/>
