@@ -1,11 +1,13 @@
 package com.unionutilities.unionutilities.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.unionutilities.unionutilities.client.AppInfoRestClient;
 import com.unionutilities.unionutilities.config.EndpointsConfig;
 import com.unionutilities.unionutilities.config.IpConfig;
 import com.unionutilities.unionutilities.config.PortsConfig;
 import com.unionutilities.unionutilities.model.ApiCallResult;
 import com.unionutilities.unionutilities.model.ApiCallResultContainer;
+import com.unionutilities.unionutilities.model.AppInfoModel;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
@@ -56,6 +58,16 @@ public class AppInfoService {
 
     public Resource getLogs(String url){
         return client.getAppLogs(url);
+    }
+
+    public Boolean updateAppInfo(String targetUrl, AppInfoModel appInfoModel){
+        try {
+            client.updateAppInfo(targetUrl, appInfoModel);
+        } catch (JsonProcessingException e){
+            log.info("Failed to process app info JSON: {}", e.getMessage());
+            return false;
+        }
+        return true;
     }
 
     private List<String> buildTargetUrls() {
