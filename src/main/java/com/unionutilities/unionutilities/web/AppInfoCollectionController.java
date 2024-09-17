@@ -1,11 +1,14 @@
 package com.unionutilities.unionutilities.web;
 
 import com.unionutilities.unionutilities.model.ApiCallResultContainer;
+import com.unionutilities.unionutilities.model.request.LogRequest;
 import com.unionutilities.unionutilities.service.AppInfoService;
 import com.unionutilities.unionutilities.service.FileService;
 import lombok.AllArgsConstructor;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,4 +40,8 @@ public class AppInfoCollectionController {
         }
     }
 
+    @GetMapping("/logs")
+    public Resource getLogFile(@RequestBody LogRequest logRequest) {
+        return appInfoService.getLogs(logRequest.getIp());
+    }
 }

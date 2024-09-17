@@ -8,6 +8,7 @@ import com.unionutilities.unionutilities.model.ApiCallResult;
 import com.unionutilities.unionutilities.model.ApiCallResultContainer;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -51,6 +52,10 @@ public class AppInfoService {
             results.add(new ApiCallResult(url, client.getAppInfo(url)));
         }
         return results;
+    }
+
+    public Resource getLogs(String url){
+        return client.getAppLogs(url);
     }
 
     private List<String> buildTargetUrls() {
