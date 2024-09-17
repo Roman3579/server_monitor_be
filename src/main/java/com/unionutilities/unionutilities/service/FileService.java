@@ -41,6 +41,18 @@ public class FileService {
         return mapper.readValue(getResultsFile(), ApiCallResultContainer.class);
     }
 
+    public File createTempLogFile() throws IOException {
+        String fileName = String.valueOf(System.currentTimeMillis());
+        String filePath = storageConfig.getFolderPath() + File.separator + fileName + ".txt";
+        File logFile = new File(filePath);
+        logFile.createNewFile();
+        return logFile;
+    }
+
+    public boolean deleteFile(File file){
+        return file.delete();
+    }
+
     private File getResultsFile() {
         return new File(storageConfig.getFolderPath() + File.separator + storageConfig.getResultFilePath());
     }
