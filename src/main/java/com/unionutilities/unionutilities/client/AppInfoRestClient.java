@@ -19,9 +19,14 @@ public class AppInfoRestClient {
 
     private OkHttpClient client;
     private ObjectMapper mapper;
+    private AuthConfig authConfig;
+    private FileService fileService;
+
+    private final String LOG_ENDPOINT = "/api/v1/info/logs";
 
     public AppInfoModel getAppInfo(String url) {
         Request request = new Request.Builder()
+                .addHeader("Authorization", "Basic " + makeAuthHeaders())
                 .url(url)
                 .build();
         return makeApiCall(request);
@@ -36,5 +41,12 @@ public class AppInfoRestClient {
             return AppInfoModel.error();
         }
     }
+
+    private String makeAuthHeaders() {
+        String plainCreds = authConfig.getUsername() + ":" + authConfig.getPassword();
+        byte[] plainCredsBytes = plainCreds.getBytes();
+        byte[] base64CredsBytes = Base64.encodeBase64(plainCredsBytes);
+        return new String(base64CredsBytes);
+        }
 
 }
