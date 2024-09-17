@@ -36,10 +36,7 @@ public class AppInfoRestClient {
     private final String LOG_ENDPOINT = "/api/v1/info/logs";
 
     public AppInfoModel getAppInfo(String url) {
-        Request request = new Request.Builder()
-                .addHeader("Authorization", "Basic " + makeAuthHeaders())
-                .url(url)
-                .build();
+        Request request = buildBasicRequest(url).build();
         return makeApiCall(request);
     }
 
@@ -79,6 +76,12 @@ public class AppInfoRestClient {
         byte[] plainCredsBytes = plainCreds.getBytes();
         byte[] base64CredsBytes = Base64.encodeBase64(plainCredsBytes);
         return new String(base64CredsBytes);
-        }
+    }
+
+    private Request.Builder buildBasicRequest(String url) {
+        return new Request.Builder()
+                .url(url)
+                .addHeader("Authorization", "Basic " + makeAuthHeaders());
+    }
 
 }
