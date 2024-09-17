@@ -1,14 +1,13 @@
 package com.unionutilities.unionutilities.client;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unionutilities.unionutilities.config.AuthConfig;
 import com.unionutilities.unionutilities.model.AppInfoModel;
 import com.unionutilities.unionutilities.service.FileService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.core.io.FileSystemResource;
@@ -34,6 +33,7 @@ public class AppInfoRestClient {
     private FileService fileService;
 
     private final String LOG_ENDPOINT = "/api/v1/info/logs";
+    private final String INFO_UPDATE_ENDPOINT = "/api/v1/info";
 
     public AppInfoModel getAppInfo(String url) {
         Request request = buildBasicRequest(url).build();
@@ -52,6 +52,25 @@ public class AppInfoRestClient {
             log.info("Failed to write to file.");
             return null;
         }
+    }
+
+    public Boolean updateAppInfo(String targetUrl, AppInfoModel appInfoModel) throws JsonProcessingException {
+        Request request = buildBasicRequest(targetUrl + INFO_UPDATE_ENDPOINT)
+                .put(buildRequestBody(appInfoModel))
+                .build();
+        try(Response response = client.newCall(request).execute()){
+            log.info("Info at {} updated successfully.", targetUrl);
+            return true;
+        } catch (IOException e){
+            log.info("Failed to update app info: {}", e.getMessage());
+            return false;
+        }
+    }
+
+    private RequestBody buildRequestBody(AppInfoModel model) throws JsonProcessingException {
+        MediaType json = MediaType.parse("application/json; charset=utf-8");
+        String appInfoJson = mapper.writeValueAsString(model);
+        return RequestBody.create(appInfoJson, json);
     }
 
     private void downloadLogsToFile(String url, File targetFile) throws IOException {
