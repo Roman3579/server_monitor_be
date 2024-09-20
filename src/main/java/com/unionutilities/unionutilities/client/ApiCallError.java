@@ -1,10 +1,10 @@
 package com.unionutilities.unionutilities.client;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
+@ToString
 public enum ApiCallError {
 
     NOT_FOUND(404, "Not found."),
