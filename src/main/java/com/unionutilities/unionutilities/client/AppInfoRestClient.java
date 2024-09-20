@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -81,13 +82,33 @@ public class AppInfoRestClient {
     }
 
     private AppInfoModel makeApiCall(Request request) {
+        log.info("Attempting call to {}", request.url());
         try (Response response = client.newCall(request).execute()){
-            log.info("Attempting call to {}", request.url());
-            return mapper.readValue(Objects.requireNonNull(response.body()).byteStream(), AppInfoModel.class);
+            return processResponse(response);
+        } catch (ConnectException e) {
+            log.info("Failed to connect to {}", request.url());
+            return new AppInfoModel(ApiCallError.CONNECTION_ERROR);
         } catch (IOException | NullPointerException e){
-            log.error(e.getMessage());
-            return AppInfoModel.error();
+            log.error("Unknown error when retrieving app info from {} : {}", request.url(), e.getMessage());
+            return new AppInfoModel(ApiCallError.UNKNOWN);
         }
+    }
+
+    private AppInfoModel processResponse(Response response) throws IOException {
+        int responseCode = response.code();
+        AppInfoModel result;
+        switch (responseCode){
+            case 200:
+                result = mapper.readValue(Objects.requireNonNull(response.body()).byteStream(), AppInfoModel.class);
+                break;
+            case 404:
+                result = new AppInfoModel(ApiCallError.NOT_FOUND);
+                break;
+            default:
+                result = new AppInfoModel(ApiCallError.UNKNOWN);
+                break;
+        }
+        return result;
     }
 
     private String makeAuthHeaders() {
