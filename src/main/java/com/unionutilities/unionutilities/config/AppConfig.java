@@ -1,6 +1,8 @@
 package com.unionutilities.unionutilities.config;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.unionutilities.unionutilities.service.FileService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +23,9 @@ public class AppConfig implements ApplicationRunner {
 
     @Bean
     public ObjectMapper objectMapper() {
-        return new ObjectMapper();
+        return new ObjectMapper()
+                .enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
+                .enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
     }
 
     @Bean
