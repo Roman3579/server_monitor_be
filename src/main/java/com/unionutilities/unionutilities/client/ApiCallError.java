@@ -4,13 +4,13 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
-import lombok.ToString;
+import org.springframework.http.HttpStatus;
 
 @Getter
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum ApiCallError {
 
-    NOT_FOUND(404, "Not found."),
+    NOT_FOUND(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.getReasonPhrase()),
     CONNECTION_ERROR(null, "Failed to connect to server."),
     UNKNOWN(null, "Unknown error");
 
