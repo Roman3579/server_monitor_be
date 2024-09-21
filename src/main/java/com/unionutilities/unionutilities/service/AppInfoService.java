@@ -8,6 +8,9 @@ import com.unionutilities.unionutilities.config.PortsConfig;
 import com.unionutilities.unionutilities.model.ApiCallResult;
 import com.unionutilities.unionutilities.model.ApiCallResultContainer;
 import com.unionutilities.unionutilities.model.AppInfoModel;
+import com.unionutilities.unionutilities.throwable.ConnectionFailedException;
+import com.unionutilities.unionutilities.throwable.NotFoundException;
+import com.unionutilities.unionutilities.throwable.UnknownApiException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
@@ -51,7 +54,11 @@ public class AppInfoService {
     public List<ApiCallResult> getAllAppInfos() {
         List<ApiCallResult> results = new ArrayList<>();
         for(String url : buildTargetUrls()){
-            results.add(new ApiCallResult(url, client.getAppInfo(url)));
+            try {
+                results.add(ApiCallResult.success(url, client.getAppInfo(url)));
+            } catch (NotFoundException | ConnectionFailedException | UnknownApiException exception){
+                results.add(ApiCallResult.error(url, exception.getMessage()));
+            }
         }
         return results;
     }

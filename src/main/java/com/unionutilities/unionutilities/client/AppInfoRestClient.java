@@ -5,6 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unionutilities.unionutilities.config.AuthConfig;
 import com.unionutilities.unionutilities.model.AppInfoModel;
 import com.unionutilities.unionutilities.service.FileService;
+import com.unionutilities.unionutilities.throwable.ConnectionFailedException;
+import com.unionutilities.unionutilities.throwable.NotFoundException;
+import com.unionutilities.unionutilities.throwable.UnknownApiException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
@@ -36,7 +39,7 @@ public class AppInfoRestClient {
     private final String LOG_ENDPOINT = "/api/v1/info/logs";
     private final String INFO_UPDATE_ENDPOINT = "/api/v1/info";
 
-    public AppInfoModel getAppInfo(String url) {
+    public AppInfoModel getAppInfo(String url) throws ConnectionFailedException, UnknownApiException, NotFoundException {
         Request request = buildBasicRequest(url).build();
         return makeApiCall(request);
     }
@@ -81,20 +84,20 @@ public class AppInfoRestClient {
         IOUtils.copy(urlConnection.getInputStream(), Files.newOutputStream(targetFile.toPath()));
     }
 
-    private AppInfoModel makeApiCall(Request request) {
+    private AppInfoModel makeApiCall(Request request) throws ConnectionFailedException, UnknownApiException, NotFoundException {
         log.info("Attempting call to {}", request.url());
         try (Response response = client.newCall(request).execute()){
             return processResponse(response);
         } catch (ConnectException e) {
             log.info("Failed to connect to {}", request.url());
-            return new AppInfoModel(ApiCallError.CONNECTION_ERROR);
+            throw new ConnectionFailedException();
         } catch (IOException | NullPointerException e){
             log.error("Unknown error when retrieving app info from {} : {}", request.url(), e.getMessage());
-            return new AppInfoModel(ApiCallError.UNKNOWN);
+            throw new UnknownApiException();
         }
     }
 
-    private AppInfoModel processResponse(Response response) throws IOException {
+    private AppInfoModel processResponse(Response response) throws IOException, NotFoundException, UnknownApiException {
         int responseCode = response.code();
         AppInfoModel result;
         switch (responseCode){
@@ -102,11 +105,9 @@ public class AppInfoRestClient {
                 result = mapper.readValue(Objects.requireNonNull(response.body()).byteStream(), AppInfoModel.class);
                 break;
             case 404:
-                result = new AppInfoModel(ApiCallError.NOT_FOUND);
-                break;
+                throw new NotFoundException();
             default:
-                result = new AppInfoModel(ApiCallError.UNKNOWN);
-                break;
+                throw new UnknownApiException();
         }
         return result;
     }
