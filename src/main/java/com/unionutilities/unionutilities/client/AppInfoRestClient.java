@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unionutilities.unionutilities.config.AuthConfig;
 import com.unionutilities.unionutilities.model.AppInfoModel;
-import com.unionutilities.unionutilities.service.FileService;
+import com.unionutilities.unionutilities.service.files.StorageService;
 import com.unionutilities.unionutilities.throwable.ConnectionFailedException;
 import com.unionutilities.unionutilities.throwable.NotFoundException;
 import com.unionutilities.unionutilities.throwable.UnknownApiException;
@@ -34,7 +34,7 @@ public class AppInfoRestClient {
     private OkHttpClient client;
     private ObjectMapper mapper;
     private AuthConfig authConfig;
-    private FileService fileService;
+    private StorageService storageService;
 
     private final String LOG_ENDPOINT = "/api/v1/info/logs";
     private final String INFO_UPDATE_ENDPOINT = "/api/v1/info";
@@ -46,7 +46,7 @@ public class AppInfoRestClient {
 
     public Resource getAppLogs(String url) {
         try {
-            File tempLogFile = fileService.createTempLogFile();
+            File tempLogFile = storageService.createTempLogFile();
             downloadLogsToFile(url, tempLogFile);
             return new FileSystemResource(tempLogFile);
         } catch (MalformedURLException e) {

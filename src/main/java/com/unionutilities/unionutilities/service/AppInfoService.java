@@ -6,6 +6,7 @@ import com.unionutilities.unionutilities.config.TargetsConfig;
 import com.unionutilities.unionutilities.model.ApiCallResult;
 import com.unionutilities.unionutilities.model.ApiCallResultContainer;
 import com.unionutilities.unionutilities.model.AppInfoModel;
+import com.unionutilities.unionutilities.service.files.ResultsService;
 import com.unionutilities.unionutilities.throwable.ConnectionFailedException;
 import com.unionutilities.unionutilities.throwable.NotFoundException;
 import com.unionutilities.unionutilities.throwable.UnknownApiException;
@@ -26,11 +27,11 @@ public class AppInfoService {
 
     private final TargetsConfig targetsConfig;
     private final AppInfoRestClient client;
-    private final FileService fileService;
+    private final ResultsService resultsService;
 
     public Boolean refreshAppInfos() {
         try {
-            fileService.writeResultsToFile(getAllAppInfos());
+            resultsService.writeResultsToFile(getAllAppInfos());
             return true;
         } catch (IOException e){
             log.error("An error occurred when refreshing app info: {}", e.getMessage());
@@ -40,7 +41,7 @@ public class AppInfoService {
 
     public Optional<ApiCallResultContainer> getStoredInfos() {
         try {
-            return Optional.of(fileService.getStoredResults());
+            return Optional.of(resultsService.getStoredResults());
         } catch (IOException e){
             log.error("An error occurred when retrieving stored results: {}", e.getMessage());
             return Optional.empty();

@@ -1,7 +1,7 @@
 package com.unionutilities.unionutilities.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.unionutilities.unionutilities.service.FileService;
+import com.unionutilities.unionutilities.service.files.FileService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
@@ -11,13 +11,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.IOException;
+import java.util.List;
 
 @Configuration
 @AllArgsConstructor
 @Slf4j
 public class AppConfig implements ApplicationRunner {
 
-    private final FileService fileService;
+    private final List<FileService> fileServices;
 
     @Bean
     public ObjectMapper objectMapper() {
@@ -35,22 +36,13 @@ public class AppConfig implements ApplicationRunner {
     }
 
     private void setupApp() throws IOException {
-        setupStorage();
+        setupFilesAndDirectories();
     }
 
-    private void setupStorage() throws IOException {
-        log.info("Setting up storage.");
-        if(!fileService.createStorageFolder()){
-            log.info("Storage directory not created, it probably already exists.");
-        } else {
-            log.info("Storage directory created.");
+    private void setupFilesAndDirectories() throws IOException {
+        for(FileService fileService : fileServices){
+            fileService.setupBaseFileOrDirectory();
         }
-        if(!fileService.createResultsFile()){
-            log.info("Storage file not created, it probably already exists.");
-        } else {
-            log.info("Storage file created.");
-        }
-        log.info("Storage setup finished.");
     }
 
 }

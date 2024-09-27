@@ -3,7 +3,7 @@ package com.unionutilities.unionutilities.web;
 import com.unionutilities.unionutilities.model.ApiCallResultContainer;
 import com.unionutilities.unionutilities.model.AppInfoModel;
 import com.unionutilities.unionutilities.service.AppInfoService;
-import com.unionutilities.unionutilities.service.FileService;
+import com.unionutilities.unionutilities.service.files.ResultsService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
@@ -21,11 +21,11 @@ import java.util.Optional;
 public class AppInfoCollectionController {
 
     private final AppInfoService appInfoService;
-    private final FileService fileService;
+    private final ResultsService resultsService;
 
     @GetMapping
     public ResponseEntity<ApiCallResultContainer> getAllApiCallResults() throws IOException {
-        return ResponseEntity.ok().body(fileService.getStoredResults());
+        return ResponseEntity.ok().body(resultsService.getStoredResults());
     }
 
     @GetMapping("/refresh")
