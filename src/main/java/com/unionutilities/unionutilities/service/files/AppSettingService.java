@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unionutilities.unionutilities.config.storage.FileConfig;
 import com.unionutilities.unionutilities.model.settings.AppSettings;
 import com.unionutilities.unionutilities.service.JsonHelper;
+import com.unionutilities.unionutilities.web.requests.AddTargetRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -51,6 +52,15 @@ public class AppSettingService implements FileService {
 
     public File getSettingsFile() {
         return storageService.getFileFromStorage(fileConfig.getSettingsFilePath());
+    }
+
+    public void addTarget(AddTargetRequest addTargetRequest) throws IOException {
+        this.appSettings.getTargets().add(addTargetRequest.getTarget());
+        updateAppSettings();
+    }
+
+    private void updateAppSettings() throws IOException {
+        JsonHelper.writeObjectToFile(getSettingsFile().toPath(), this.appSettings);
     }
 
 }
