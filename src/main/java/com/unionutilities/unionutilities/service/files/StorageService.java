@@ -9,14 +9,9 @@ import java.io.IOException;
 
 @Service
 @AllArgsConstructor
-public class StorageService implements FileService {
+public class StorageService {
 
     private final StorageConfig storageConfig;
-
-    @Override
-    public Boolean setupBaseFileOrDirectory() throws IOException {
-        return createStorageFolder();
-    }
 
     public Boolean createStorageFolder() {
         return new File(storageConfig.getFolderPath()).mkdirs();
