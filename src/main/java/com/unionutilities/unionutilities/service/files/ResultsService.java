@@ -1,18 +1,15 @@
 package com.unionutilities.unionutilities.service.files;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.unionutilities.unionutilities.config.storage.FileConfig;
 import com.unionutilities.unionutilities.model.ApiCallResult;
 import com.unionutilities.unionutilities.model.ApiCallResultContainer;
+import com.unionutilities.unionutilities.service.JsonHelper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -42,8 +39,6 @@ public class ResultsService implements FileService {
 
     public void writeResultsToFile(List<ApiCallResult> apiCallResults) throws IOException {
         ApiCallResultContainer container = new ApiCallResultContainer(apiCallResults);
-        ObjectWriter objectWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        String json = objectWriter.writeValueAsString(container);
-        Files.write(getResultsFile().toPath(), Collections.singleton(json), StandardCharsets.UTF_8);
+        JsonHelper.writeObjectToFile(getResultsFile().toPath(), container);
     }
 }
