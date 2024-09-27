@@ -2,10 +2,10 @@ package com.unionutilities.unionutilities.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.unionutilities.unionutilities.client.AppInfoRestClient;
-import com.unionutilities.unionutilities.config.TargetsConfig;
 import com.unionutilities.unionutilities.model.ApiCallResult;
 import com.unionutilities.unionutilities.model.ApiCallResultContainer;
 import com.unionutilities.unionutilities.model.AppInfoModel;
+import com.unionutilities.unionutilities.service.files.AppSettingService;
 import com.unionutilities.unionutilities.service.files.ResultsService;
 import com.unionutilities.unionutilities.throwable.ConnectionFailedException;
 import com.unionutilities.unionutilities.throwable.NotFoundException;
@@ -25,7 +25,7 @@ import java.util.Optional;
 @Slf4j
 public class AppInfoService {
 
-    private final TargetsConfig targetsConfig;
+    private final AppSettingService appSettingService;
     private final AppInfoRestClient client;
     private final ResultsService resultsService;
 
@@ -50,7 +50,7 @@ public class AppInfoService {
 
     public List<ApiCallResult> getAllAppInfos() {
         List<ApiCallResult> results = new ArrayList<>();
-        for(String url : targetsConfig.getTargets()){
+        for(String url : appSettingService.getTargets()){
             try {
                 results.add(ApiCallResult.success(url, client.getAppInfo(url)));
             } catch (NotFoundException | ConnectionFailedException | UnknownApiException exception){
