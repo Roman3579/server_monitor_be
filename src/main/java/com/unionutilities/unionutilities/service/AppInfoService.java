@@ -2,9 +2,7 @@ package com.unionutilities.unionutilities.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.unionutilities.unionutilities.client.AppInfoRestClient;
-import com.unionutilities.unionutilities.config.EndpointsConfig;
-import com.unionutilities.unionutilities.config.IpConfig;
-import com.unionutilities.unionutilities.config.PortsConfig;
+import com.unionutilities.unionutilities.config.TargetsConfig;
 import com.unionutilities.unionutilities.model.ApiCallResult;
 import com.unionutilities.unionutilities.model.ApiCallResultContainer;
 import com.unionutilities.unionutilities.model.AppInfoModel;
@@ -26,9 +24,7 @@ import java.util.Optional;
 @Slf4j
 public class AppInfoService {
 
-    private final IpConfig ipConfig;
-    private final PortsConfig portsConfig;
-    private final EndpointsConfig endpointsConfig;
+    private final TargetsConfig targetsConfig;
     private final AppInfoRestClient client;
     private final FileService fileService;
 
@@ -53,7 +49,7 @@ public class AppInfoService {
 
     public List<ApiCallResult> getAllAppInfos() {
         List<ApiCallResult> results = new ArrayList<>();
-        for(String url : buildTargetUrls()){
+        for(String url : targetsConfig.getTargets()){
             try {
                 results.add(ApiCallResult.success(url, client.getAppInfo(url)));
             } catch (NotFoundException | ConnectionFailedException | UnknownApiException exception){
@@ -75,22 +71,6 @@ public class AppInfoService {
             return false;
         }
         return true;
-    }
-
-    private List<String> buildTargetUrls() {
-        List<String> allTargets = new ArrayList<>();
-        for(String ip : ipConfig.getIpAddresses()){
-            for(Integer port = portsConfig.getLowerBound(); port <= portsConfig.getUpperBound(); port++){
-                for(String endpoint : endpointsConfig.getInfoEndpoints()){
-                    allTargets.add(buildUrl(ip, port.toString(), endpoint));
-                }
-            }
-        }
-        return allTargets;
-    }
-
-    private String buildUrl(String ip, String port, String endpoint){
-        return ip + ":" + port + endpoint;
     }
 
 }

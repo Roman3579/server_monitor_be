@@ -9,9 +9,7 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class ConfigInfoPrinter implements ApplicationRunner {
 
-    private PortsConfig portsConfig;
-    private EndpointsConfig endpointsConfig;
-    private IpConfig ipConfig;
+    private TargetsConfig targetsConfig;
 
     @Override
     public void run(ApplicationArguments args) {
@@ -22,15 +20,10 @@ public class ConfigInfoPrinter implements ApplicationRunner {
         System.out.println("----------------------");
         System.out.println("| Configuration info |");
         System.out.println("----------------------");
-        System.out.println("IP ADDRESSES");
-        ipConfig.getIpAddresses().forEach(System.out::println);
-        System.out.println("----------------------");
-        System.out.println("PORTS");
-        System.out.println("Lower bound: " + portsConfig.getLowerBound());
-        System.out.println("Upper bound: " + portsConfig.getUpperBound());
-        System.out.println("----------------------");
-        System.out.println("ENDPOINTS");
-        endpointsConfig.getInfoEndpoints().forEach(System.out::println);
+        System.out.println("TARGETS");
+        for (String target : targetsConfig.getTargets()){
+            System.out.println(target);
+        }
         System.out.println("----------------------");
     }
 }
